@@ -53,7 +53,7 @@ public class JacksonTest {
         Device device1 = new Device(2L, "Audio system");
         Device device2 = new Device(3L, "Toy");
 
-        List<Device> devices = new ArrayList();
+        List<Device> devices = new ArrayList<Device>();
 
         devices.add(device1);
         devices.add(device2);
