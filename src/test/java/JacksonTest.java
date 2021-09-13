@@ -1,8 +1,11 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +13,11 @@ import java.util.List;
 public class JacksonTest {
 
     static final ObjectWriter serializer = new ObjectMapper().writer().withDefaultPrettyPrinter();
+
+    // ignore some field when deser.
+    // different name of fields in JSON and class
+    // when deser. we map input value, default value to text
+    // only constructor with parameters
 
     static final String expectedJson = "{\n" +
             "  \"id\" : 4,\n" +
@@ -29,13 +37,13 @@ public class JacksonTest {
             "}";
 
     @Test
-    public void fromObjectsToJson() throws JsonProcessingException {
+    public void fromObjectsToJson() throws JsonProcessingException, JSONException {
 
         Car car = createTestCar();
 
         String actual = serializer.writeValueAsString(car);
 
-        Assertions.assertEquals(expectedJson, actual);
+        JSONAssert.assertEquals(expectedJson,actual, false);
     }
 
     @Test
@@ -45,6 +53,32 @@ public class JacksonTest {
         Car car = objectMapper.readValue(createTestCarJson(), Car.class);
 
         Assertions.assertEquals(expected, car);
+    }
+
+    @Test
+    public void testIgnoreField() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Phone expected = createPhone(1L, null, "0987654123");
+        String phone = createPhoneJson(1L, "Iphone", "0987654123");
+        Phone actual = objectMapper.readValue(phone, Phone.class);
+
+        Assertions.assertEquals(expected, actual);
+
+    }
+
+    @Test
+    public void testDifferentFieldNames() throws JsonProcessingException, JSONException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Order orderExpected = createOrder();
+        String orderJsonExpected = serializer.writeValueAsString(orderExpected);
+
+        Order actualObject = objectMapper.readValue(orderJsonExpected, Order.class);
+
+        String actualJson = serializer.writeValueAsString(orderExpected);
+
+        Assertions.assertEquals(orderExpected, actualObject);
+        JSONAssert.assertEquals(orderJsonExpected, actualJson, false);
     }
 
     static Car createTestCar() {
@@ -60,6 +94,7 @@ public class JacksonTest {
 
         return new Car(4L, "Track", false, engine, devices);
     }
+
 
     static String createTestCarJson() {
         return "{\n" +
@@ -77,6 +112,42 @@ public class JacksonTest {
                 "    \"name\" : \"Toy\"\n" +
                 "  } ],\n" +
                 "  \"damaged\" : false\n" +
+                "}";
+    }
+
+    static String createPhoneJson(Long id, String model, String number) {
+       return "{\n" +
+               "  \"id\": \"" + id +"\",\n" +
+               "  \"model\": \"" + model + "\",\n" +
+               "  \"number\": \"" + number + "\" \n" +
+               "}";
+    }
+
+    static Phone createPhone(Long id, String model, String number) {
+        Phone phone = new Phone();
+
+        phone.setId(id);
+        phone.setModel(model);
+        phone.setNumber(number);
+
+        return phone;
+    }
+
+    static Order createOrder() {
+        Order order = new Order();
+
+        order.setId(1L);
+        order.setName("Food");
+        order.setDuration(10L);
+
+        return order;
+    }
+
+    static String createOrderJson() {
+        return "{\n" +
+                "  \"identification\": 1,\n" +
+                "  \"label\": \"Food\",\n" +
+                "  \"time\": 10\n" +
                 "}";
     }
 }
