@@ -13,10 +13,9 @@ public class JacksonTest {
 
     static final ObjectWriter serializer = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
-    // ignore some field when deser.
-    // different name of fields in JSON and class
-    // when deser. we map input value, default value to text
-    // only constructor with parameters
+    // TODO:
+    // do same with xml
+    // we xml
 
     static final String expectedJson = "{\n" +
             "  \"id\" : 4,\n" +
@@ -68,16 +67,15 @@ public class JacksonTest {
     @Test
     public void testDifferentFieldNames() throws JsonProcessingException, JSONException {
         ObjectMapper objectMapper = new ObjectMapper();
+        String expectedOrderJson = createOrderJson();
 
-        Order orderExpected = createOrder();
-        String orderJsonExpected = serializer.writeValueAsString(orderExpected);
+        Order newOrderObject = createOrder();
+        String serializedOrderInJson = serializer.writeValueAsString(newOrderObject);
 
-        Order actualObject = objectMapper.readValue(orderJsonExpected, Order.class);
+        Order deserializedOrderBackToObject = objectMapper.readValue(serializedOrderInJson, Order.class);
 
-        String actualJson = serializer.writeValueAsString(orderExpected);
-
-        Assertions.assertEquals(orderExpected, actualObject);
-        JSONAssert.assertEquals(orderJsonExpected, actualJson, false);
+        Assertions.assertEquals(newOrderObject, deserializedOrderBackToObject);
+        JSONAssert.assertEquals(serializedOrderInJson, expectedOrderJson, false);
     }
 
     @Test
@@ -150,6 +148,14 @@ public class JacksonTest {
         order.setDuration(10L);
 
         return order;
+    }
+
+    static String createOrderJson() {
+        return "{\n" +
+                "  \"identification\": 1,\n" +
+                "  \"label\": \"Food\",\n" +
+                "  \"time\": 10\n" +
+                "}";
     }
 
     static Animal createAnimal() {
