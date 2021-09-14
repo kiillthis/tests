@@ -5,7 +5,6 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +80,16 @@ public class JacksonTest {
         JSONAssert.assertEquals(orderJsonExpected, actualJson, false);
     }
 
+    @Test
+    public void testOnlyWithConstructorWithParameters() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Animal animalExpected = createAnimal();
+        String animalJson = serializer.writeValueAsString(animalExpected);
+        Animal actual = objectMapper.readValue(animalJson, Animal.class);
+
+        Assertions.assertEquals(animalExpected, actual);
+    }
+
     static Car createTestCar() {
         Engine engine = new Engine(1L, "Yamaha");
 
@@ -143,11 +152,8 @@ public class JacksonTest {
         return order;
     }
 
-    static String createOrderJson() {
-        return "{\n" +
-                "  \"identification\": 1,\n" +
-                "  \"label\": \"Food\",\n" +
-                "  \"time\": 10\n" +
-                "}";
+    static Animal createAnimal() {
+        return new Animal(1L, "John", 10L);
     }
+
 }
