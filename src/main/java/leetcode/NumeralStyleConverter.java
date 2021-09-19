@@ -11,24 +11,41 @@ import java.util.regex.Pattern;
  */
 public class NumeralStyleConverter {
 
-    private final static TreeMap<Integer, String> tableToRomanConversion = new TreeMap<>(Collections.reverseOrder());
+    private final static Map<Integer, String> tableOfRomanAndArabicEquivalence = new TreeMap<>(Collections.reverseOrder());
+
+    private final static String VALIDATE_SYMBOLS;
+    private final static Pattern pattern;
 
     static {
 
-        tableToRomanConversion.put(1000, "M");
-        tableToRomanConversion.put(900, "CM");
-        tableToRomanConversion.put(500, "D");
-        tableToRomanConversion.put(400, "CD");
-        tableToRomanConversion.put(100, "C");
-        tableToRomanConversion.put(90, "XC");
-        tableToRomanConversion.put(50, "L");
-        tableToRomanConversion.put(40, "XL");
-        tableToRomanConversion.put(10, "X");
-        tableToRomanConversion.put(9, "IX");
-        tableToRomanConversion.put(5, "V");
-        tableToRomanConversion.put(4, "IV");
-        tableToRomanConversion.put(1, "I");
+        tableOfRomanAndArabicEquivalence.put(1000, "M");
+        tableOfRomanAndArabicEquivalence.put(900, "CM");
+        tableOfRomanAndArabicEquivalence.put(500, "D");
+        tableOfRomanAndArabicEquivalence.put(400, "CD");
+        tableOfRomanAndArabicEquivalence.put(100, "C");
+        tableOfRomanAndArabicEquivalence.put(90, "XC");
+        tableOfRomanAndArabicEquivalence.put(50, "L");
+        tableOfRomanAndArabicEquivalence.put(40, "XL");
+        tableOfRomanAndArabicEquivalence.put(10, "X");
+        tableOfRomanAndArabicEquivalence.put(9, "IX");
+        tableOfRomanAndArabicEquivalence.put(5, "V");
+        tableOfRomanAndArabicEquivalence.put(4, "IV");
+        tableOfRomanAndArabicEquivalence.put(1, "I");
 
+        StringBuilder regexCreatedString = new StringBuilder();
+        StringBuilder romanValues = new StringBuilder();
+
+        for (String value: tableOfRomanAndArabicEquivalence.values()) {
+            romanValues.append(value);
+        }
+
+        regexCreatedString.append("[^");
+        regexCreatedString.append(romanValues);
+        regexCreatedString.append("]");
+
+        VALIDATE_SYMBOLS = regexCreatedString.toString();
+
+        pattern = Pattern.compile(VALIDATE_SYMBOLS);
     }
 
     /**
@@ -45,7 +62,7 @@ public class NumeralStyleConverter {
         StringBuilder answer = new StringBuilder();
 
         while (number > 0) {
-            for (Map.Entry<Integer, String> equivalent : tableToRomanConversion.entrySet()) {
+            for (Map.Entry<Integer, String> equivalent : tableOfRomanAndArabicEquivalence.entrySet()) {
                 if(equivalent.getKey() <= number) {
                     answer.append(equivalent.getValue());
                     number -= equivalent.getKey();
@@ -63,22 +80,26 @@ public class NumeralStyleConverter {
      * @return Integer of arabic equivalent
      */
     public Integer romanToArabic(String number) {
-        StringBuilder romanNumber = new StringBuilder(number);
-
-        Integer answer = 0;
 
         if(!checkValidityRomanNumber(number)) {
             return 0;
         }
 
-        while (!romanNumber.toString().equals("")) {
-            for (Map.Entry<Integer, String> equivalent : tableToRomanConversion.entrySet()) {
+        StringBuilder romanNumber = new StringBuilder(number);
+
+        Integer answer = 0;
+
+        while (romanNumber.length() != 0) {
+            for (Map.Entry<Integer, String> equivalent : tableOfRomanAndArabicEquivalence.entrySet()) {
                 if (romanNumber.substring(0).startsWith(equivalent.getValue())) {
                     answer += equivalent.getKey();
                     if (equivalent.getValue().length() == 2) {
-                        romanNumber.delete(0, 1);
-                    } else {
+                        romanNumber.delete(0, 2);
+                    } else if (equivalent.getValue().length() == 1) {
                         romanNumber.deleteCharAt(0);
+                    } else {
+                        String exception = String.format("Wrong roman value in a table, value = %s", equivalent.getValue());
+                        throw new IllegalArgumentException(exception);
                     }
                     break;
                 }
@@ -93,8 +114,6 @@ public class NumeralStyleConverter {
             return false;
         }
 
-        String VALIDATE_SYMBOLS = "[^CM|D|CD|C|XC|L|XL|X|IX|V|IV|I]";
-        Pattern pattern = Pattern.compile(VALIDATE_SYMBOLS);
         Matcher matcher = pattern.matcher(number);
 
         return !matcher.find();
