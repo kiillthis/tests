@@ -64,11 +64,11 @@ public class NumeralStyleConverterTest {
 
     static Stream<Arguments> numberWrongRomanProvider() {
         return Stream.of(
-                Arguments.of(0, null),
-                Arguments.of(0, ""),
-                Arguments.of(0, "  "),
-                Arguments.of(0, "M45F"),
-                Arguments.of(0, "FK")
+                Arguments.of(null, null),
+                Arguments.of(null, ""),
+                Arguments.of(null, "  "),
+                Arguments.of(null, "M45F"),
+                Arguments.of(null, "FK")
         );
     }
 
