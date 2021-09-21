@@ -8,7 +8,8 @@ import java.util.*;
  */
 public class NumeralStyleConverter {
 
-    private final static List<Equivalent> romanToArabicTable;
+    private final static List<Equivalent> arabicToRomanTable;
+    private final static Map<String, Integer> romanToArabicTable;
 
     private static class Equivalent {
         private int arabic;
@@ -39,7 +40,15 @@ public class NumeralStyleConverter {
         };
 
         Arrays.sort(arr, Comparator.comparingInt(a -> a.arabic));
-        romanToArabicTable = Collections.unmodifiableList(Arrays.asList(arr));
+        arabicToRomanTable = Collections.unmodifiableList(Arrays.asList(arr));
+
+        Map<String, Integer> romanToArabicMap = new TreeMap<>(new RomanToArabicTableComparator());
+
+        for (Equivalent equivalent: arabicToRomanTable) {
+            romanToArabicMap.put(equivalent.roman, equivalent.arabic);
+        }
+
+        romanToArabicTable = Collections.unmodifiableMap(romanToArabicMap);
     }
 
     /**
@@ -52,13 +61,13 @@ public class NumeralStyleConverter {
             return "";
         }
         StringBuilder answer = new StringBuilder();
-        int i = romanToArabicTable.size() - 1;
+        int i = arabicToRomanTable.size() - 1;
         while (number > 0) {
-            while (romanToArabicTable.get(i).arabic > number) {
+            while (arabicToRomanTable.get(i).arabic > number) {
                 i--;
             }
-            answer.append(romanToArabicTable.get(i).roman);
-            number -= romanToArabicTable.get(i).arabic;
+            answer.append(arabicToRomanTable.get(i).roman);
+            number -= arabicToRomanTable.get(i).arabic;
         }
 
         return answer.toString();
@@ -77,12 +86,14 @@ public class NumeralStyleConverter {
         StringBuilder romanNumber = new StringBuilder(number);
         int answer = 0;
         while (romanNumber.length() != 0) {
-            for (int j = romanToArabicTable.size() - 1; j >= 0; j--) {
+            for (Map.Entry<String, Integer> equivalence: romanToArabicTable.entrySet()) {
                 illegalArgument = true;
-                while (startsWith(romanNumber, romanToArabicTable.get(j).roman)) {
-                     answer += romanToArabicTable.get(j).arabic;
-                     romanNumber.delete(0, romanToArabicTable.get(j).roman.length());
+                int lengthOfSubsequence = romanNumber.length() > 1 ? 2 : 1;
+                if (startsWith(romanNumber.subSequence(0, lengthOfSubsequence), equivalence.getKey())) {
+                     answer += equivalence.getValue();
+                     romanNumber.delete(0, equivalence.getKey().length());
                      illegalArgument = false;
+                     break;
                 }
             }
             if (illegalArgument && romanNumber.length() != 0) {
@@ -93,14 +104,14 @@ public class NumeralStyleConverter {
     }
 
     private boolean startsWith(CharSequence sequence, CharSequence prefix) {
-        for (int i = 0; i < sequence.length(); i++) {
+        if (sequence.length() < prefix.length()) {
+            return false;
+        }
+        for (int i = 0; i < prefix.length(); i++) {
             if (prefix.charAt(i) != sequence.charAt(i)) {
                 return false;
             }
-            if(prefix.length() == i + 1) {
-                return true;
-            }
         }
-        return false;
+        return true;
     }
 }
