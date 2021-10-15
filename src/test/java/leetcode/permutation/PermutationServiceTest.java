@@ -18,9 +18,11 @@ class PermutationServiceTest {
     @ParameterizedTest
     @MethodSource("arraysProvider")
     public void testNextPermutation(List<Integer> arrayToPermutation, List<Integer> arrayExpected) {
-        List<Integer> actual = permutationService.findNextPermutation(arrayToPermutation);
+        List<Integer> actual = permutationService.nextGreater(arrayToPermutation);
         assertEquals(arrayExpected, actual);
     }
+
+    //todo check all permutations
 
     static Stream<Arguments> arraysProvider() {
 
@@ -28,6 +30,7 @@ class PermutationServiceTest {
                 Arguments.of(new ArrayList<>(Arrays.asList(1, 2, 3)), new ArrayList<>(Arrays.asList(1, 3, 2))),
                 Arguments.of(new ArrayList<>(Arrays.asList(3, 2, 1)), new ArrayList<>(Arrays.asList(1, 2, 3))),
                 Arguments.of(new ArrayList<>(Arrays.asList(1, 1, 5)), new ArrayList<>(Arrays.asList(1, 5, 1))),
+                //todo duplicates
                 Arguments.of(new ArrayList<>(Arrays.asList(1)), new ArrayList<>(Arrays.asList(1))),
                 Arguments.of(null, new ArrayList<>()),
                 Arguments.of(new ArrayList<>(Arrays.asList(1, 1, 5, 4, 1)), new ArrayList<>(Arrays.asList(1, 4, 1, 1, 5)))

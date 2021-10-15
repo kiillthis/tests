@@ -5,18 +5,17 @@ import java.util.List;
 
 /**
  * Service for next lexicographic permutation
- * It work in next algorithm:
- * 1. Find point of change.
- * 2. Find the number for substitution.
- * 3. Rearrange remaining array by reversing.
+
  */
 public class PermutationService {
 
+    //todo: good javadoc
     /**
+     *
      * @param array array where should be permutation done
      * @return array with next lexicographic permutation
      */
-    public List<Integer> findNextPermutation(List<Integer> array) {
+    public List<Integer> nextGreater(List<Integer> array) { //todo return false if not possible, better argument type
         if (array == null) {
             return new ArrayList<>();
         }
@@ -28,11 +27,12 @@ public class PermutationService {
             int j = array.size() - 1;
             while (j >= 0 && array.get(j) <= array.get(i)) {
                 j--;
+                //todo
             }
             swap(array, i, j);
         }
         reverse(array, i + 1);
-        return array;
+        return array; //todo
     }
 
     /**
@@ -40,6 +40,7 @@ public class PermutationService {
      * @param i one of integer to be swapped
      * @param j another one integer that will be swapped
      */
+    //todo generic
     private void swap(List<Integer> array, int i, int j) {
         int temp = array.get(i);
         array.set(i, array.get(j));
