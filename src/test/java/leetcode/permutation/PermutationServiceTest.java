@@ -2,13 +2,13 @@ package leetcode.permutation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 
 class PermutationServiceTest {
@@ -17,23 +17,43 @@ class PermutationServiceTest {
 
     @ParameterizedTest
     @MethodSource("arraysProvider")
-    public void testNextPermutation(List<Integer> arrayToPermutation, List<Integer> arrayExpected) {
-        List<Integer> actual = permutationService.nextGreater(arrayToPermutation);
-        assertEquals(arrayExpected, actual);
+    public void getNextGreaterValue(Byte[] arrayToPermutation, Byte[] arrayExpected, boolean permutationExpected) {
+        boolean actual = permutationService.getNextGreaterValue((arrayToPermutation));
+        assertEquals(permutationExpected, actual);
+        assertArrayEquals(arrayExpected, arrayToPermutation);
     }
 
-    //todo check all permutations
+    @Test
+    public void testAllPermutation() {
+        Byte[] array = new Byte[] {1, 2, 3};
+        boolean isReverted = true;
+
+        while (isReverted) {
+            Byte[] arrayPrevious = array.clone();
+            isReverted = permutationService.getNextGreaterValue(array);
+            if (isReverted) {
+                boolean isBigger = false;
+                for (int i = 0; i < array.length; i++) {
+                    if (array[i] > arrayPrevious[i]) {
+                        isBigger = true;
+                        break;
+                    }
+                }
+                Assertions.assertTrue(isBigger);
+            }
+        }
+    }
+
 
     static Stream<Arguments> arraysProvider() {
-
         return Stream.of(
-                Arguments.of(new ArrayList<>(Arrays.asList(1, 2, 3)), new ArrayList<>(Arrays.asList(1, 3, 2))),
-                Arguments.of(new ArrayList<>(Arrays.asList(3, 2, 1)), new ArrayList<>(Arrays.asList(1, 2, 3))),
-                Arguments.of(new ArrayList<>(Arrays.asList(1, 1, 5)), new ArrayList<>(Arrays.asList(1, 5, 1))),
-                //todo duplicates
-                Arguments.of(new ArrayList<>(Arrays.asList(1)), new ArrayList<>(Arrays.asList(1))),
-                Arguments.of(null, new ArrayList<>()),
-                Arguments.of(new ArrayList<>(Arrays.asList(1, 1, 5, 4, 1)), new ArrayList<>(Arrays.asList(1, 4, 1, 1, 5)))
+                Arguments.of(new Byte[]{1, 2, 3}, new Byte[]{1, 3, 2}, Boolean.TRUE),
+                Arguments.of(new Byte[]{3, 2, 1}, new Byte[]{1, 2, 3}, Boolean.FALSE),
+                Arguments.of(new Byte[]{1, 1, 5}, new Byte[]{1, 5, 1}, Boolean.TRUE),
+                Arguments.of(new Byte[]{2, 2, 2}, new Byte[] {2,2,2}, Boolean.FALSE),
+                Arguments.of(new Byte[]{1}, new Byte[]{1}, Boolean.FALSE),
+                Arguments.of(null, null, Boolean.FALSE),
+                Arguments.of(new Byte[]{1, 1, 5, 4, 1}, new Byte[]{1, 4, 1, 1, 5}, Boolean.TRUE)
         );
     }
 }

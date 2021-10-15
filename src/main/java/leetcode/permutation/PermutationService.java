@@ -1,61 +1,61 @@
 package leetcode.permutation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Service for next lexicographic permutation
-
+ * Service for permutations to get bigger value of input data
  */
 public class PermutationService {
 
-    //todo: good javadoc
     /**
-     *
-     * @param array array where should be permutation done
-     * @return array with next lexicographic permutation
+     * Method receives an array which will be permutated
+     * to next bigger array and signals by returning 'true' if permutation was done.
+     * Otherwise, false will be returned.
+     * @param array byte array which will be permutated to next value
+     * @return true or false depending if permutated happened
      */
-    public List<Integer> nextGreater(List<Integer> array) { //todo return false if not possible, better argument type
+    public boolean getNextGreaterValue(Byte[] array) {
+        boolean isPermutated = false;
         if (array == null) {
-            return new ArrayList<>();
+            return false;
         }
-        int i = array.size() - 2;
-        while (i >= 0 && array.get(i) >= array.get(i + 1)) {
+        int i = array.length - 2;
+        while (i >= 0 && array[i] >= array[i + 1]) {
             i--;
         }
         if (i >= 0) {
-            int j = array.size() - 1;
-            while (j >= 0 && array.get(j) <= array.get(i)) {
+            int j = array.length - 1;
+            while (j >= 0 && array[j] <= array[i]) {
                 j--;
-                //todo
+                //todo ???
             }
             swap(array, i, j);
+            if (!isPermutated) {
+                isPermutated = true;
+            }
         }
         reverse(array, i + 1);
-        return array; //todo
+        return isPermutated;
     }
 
     /**
-     * @param array array of integers that will be permuted
-     * @param i one of integer to be swapped
-     * @param j another one integer that will be swapped
+     * @param array array that will be permuted
+     * @param i one element to be swapped
+     * @param j another one element that will be swapped
      */
-    //todo generic
-    private void swap(List<Integer> array, int i, int j) {
-        int temp = array.get(i);
-        array.set(i, array.get(j));
-        array.set(j, temp);
+    private <T> void swap(T[] array, int i, int j) {
+        T temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
     }
 
     /**
      * @param array array whose content will be reverted
-     * @param start element from which
+     * @param beginIndex element from which reversion should start
      */
-    private void reverse(List<Integer> array, int start) {
-        int end = array.size() - 1;
-        while (start < end) {
-            swap(array, start, end);
-            start++;
+    private void reverse(Byte[] array, int beginIndex) {
+        int end = array.length - 1;
+        while (beginIndex < end) {
+            swap(array, beginIndex, end);
+            beginIndex++;
             end--;
         }
     }
