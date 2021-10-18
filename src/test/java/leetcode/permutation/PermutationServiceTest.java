@@ -23,6 +23,7 @@ class PermutationServiceTest {
         assertArrayEquals(arrayExpected, arrayToPermutation);
     }
 
+    //todo calculate number of permutations; Byte -> byte;
     @Test
     public void testAllPermutation() {
         Byte[] array = new Byte[] {1, 2, 3};
@@ -32,6 +33,7 @@ class PermutationServiceTest {
             Byte[] arrayPrevious = array.clone();
             isReverted = permutationService.getNextGreaterValue(array);
             if (isReverted) {
+                //todo separate method
                 boolean isBigger = false;
                 for (int i = 0; i < array.length; i++) {
                     if (array[i] > arrayPrevious[i]) {

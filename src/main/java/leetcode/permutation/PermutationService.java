@@ -1,19 +1,23 @@
 package leetcode.permutation;
 
+import java.util.Arrays;
+
 /**
  * Service for permutations to get bigger value of input data
  */
 public class PermutationService {
 
+    //todo fix javadoc
     /**
      * Method receives an array which will be permutated
      * to next bigger array and signals by returning 'true' if permutation was done.
      * Otherwise, false will be returned.
+     *
      * @param array byte array which will be permutated to next value
      * @return true or false depending if permutated happened
      */
+    //todo 1) byte; 2) do not revert, just return
     public boolean getNextGreaterValue(Byte[] array) {
-        boolean isPermutated = false;
         if (array == null) {
             return false;
         }
@@ -21,19 +25,17 @@ public class PermutationService {
         while (i >= 0 && array[i] >= array[i + 1]) {
             i--;
         }
-        if (i >= 0) {
-            int j = array.length - 1;
-            while (j >= 0 && array[j] <= array[i]) {
-                j--;
-                //todo ???
-            }
-            swap(array, i, j);
-            if (!isPermutated) {
-                isPermutated = true;
-            }
+        if (i < 0) {
+            reverse(array, 0);
+            return false;
         }
+        int j = i - 1;
+        while (j >= 0 && array[j] <= array[i]) {
+            j--;
+        }
+        swap(array, i, j);
         reverse(array, i + 1);
-        return isPermutated;
+        return true;
     }
 
     /**
