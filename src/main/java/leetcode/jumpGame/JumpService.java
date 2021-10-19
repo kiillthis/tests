@@ -11,7 +11,7 @@ public class JumpService {
      * Search minimum steps to reach last element.
      *
      * @param array array with elements where each element value is possible max jump to another element.
-     * @return optional integer to reach last element in array. If array not valid - returns empty optional.
+     * @return optional integer to reach last element in array. If array is not valid - returns empty optional.
      */
     public Optional<Integer> findCountOfShortestWay (byte[] array) {
         if (!isArrayValid(array)) {
