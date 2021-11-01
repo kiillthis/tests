@@ -1,10 +1,14 @@
 package service;
 
 import javax.mail.Authenticator;
+import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -55,7 +59,7 @@ public class EmailService {
             String msg = "This is my first email using JavaMailer";
 
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
-            mimeBodyPart.setContent(msg, "text/html");
+            mimeBodyPart.setContent(msg, "image/jpeg");
 
             MimeBodyPart attachmentBodyPart = new MimeBodyPart();
             attachmentBodyPart.attachFile(new File("pom.xml"));
@@ -70,6 +74,42 @@ public class EmailService {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void receiveMail() {
+        try {
+            Properties prop = new Properties();
+            prop.put("mail.imap.host", host);
+            prop.put("mail.imap.port", port);
+            prop.put("mail.imap.starttls.enable", "true");
+            Session emailSessionObj = Session.getDefaultInstance(prop);
+            //Create store object and connect with the server
+            Store storeObj = emailSessionObj.getStore("imaps");
+            storeObj.connect(host, username, password);
+            //Create folder object and open it in read-only mode
+            Folder emailFolderObj = storeObj.getFolder("INBOX");
+            emailFolderObj.open(Folder.READ_ONLY);
+            //Fetch messages from the folder and print in a loop
+            Message[] messageObjs = emailFolderObj.getMessages();
+
+            for (int i = 0, n = messageObjs.length; i < n; i++) {
+                Message indvidualMsg = messageObjs[i];
+                System.out.println("Printing individual messages");
+                System.out.println("No# " + (i + 1));
+                System.out.println("Email Subject: " + indvidualMsg.getSubject());
+                System.out.println("Sender: " + indvidualMsg.getFrom()[0]);
+                System.out.println("Content: " + indvidualMsg.getContent());
+            }
+            //Now close all the objects
+            emailFolderObj.close(false);
+            storeObj.close();
+        } catch (NoSuchProviderException exp) {
+            exp.printStackTrace();
+        } catch (MessagingException exp) {
+            exp.printStackTrace();
+        } catch (Exception exp) {
+            exp.printStackTrace();
         }
     }
 }

@@ -6,5 +6,6 @@ public class EmailApplication {
                 "test1mail3210@gmail.com", "Zxc993sa");
 
         emailService.sendMail("test1mail3210@gmail.com");
+        emailService.receiveMail();
     }
 }
