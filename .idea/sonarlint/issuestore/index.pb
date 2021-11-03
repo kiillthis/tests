@@ -7,3 +7,13 @@ d
 4src/test/java/leetcode/jumpGame/JumpServiceTest.java,f/f/ff169fabd349db743c18e54fdca690a53354c8f2
 `
 0src/main/java/leetcode/jumpGame/JumpService.java,a/0/a0e791cd115677599bbd7cc3d0a2c4947a66cf6a
+d
+4emailProject/src/main/java/service/EmailService.java,1/3/13961692ae0ccbd2315fde1aa4b37eff5a95a456
+7
+pom.xml,4/4/442292b8a7efeabbe4cc176709b833b1792140ec
+D
+emailProject/pom.xml,e/8/e855e4095ea9e48d1615b3b33232cd4d76e546d7
+`
+0emailProject/src/main/java/EmailApplication.java,6/3/63a3ff603336cf841bd6428dd28446aa4c518226
+j
+:src/main/java/leetcode/permutation/PermutationService.java,f/8/f8696d9d911e1f54683cb4000714c18af39091eb
